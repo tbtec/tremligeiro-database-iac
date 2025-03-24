@@ -63,13 +63,12 @@ resource "aws_security_group" "rds_security_group" {
   }
 
   ingress {
-    description = "Allow HTTPS traffic"
-    from_port   = 443
-    to_port     = 443
+    description = "PostgreSQL"
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.aws_subnet.name_subnet_a.cidr_block, data.aws_subnet.name_subnet_b.cidr_block]  
   }
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
