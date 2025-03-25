@@ -23,31 +23,40 @@ data "aws_subnet" "name_subnet_b" {
   }
 }
 
+resource "aws_db_parameter_group" "db_parameter_group" {
+  name   = "db-pg-tremligeiro-postgres-db"
+  family = "postgres17"
+
+  parameter {
+    name  = "rds.force_ssl"
+    value = "0" # Disable SSL
+  }
+}
+
 resource "aws_db_instance" "postgres_db" {
-  identifier          = "tremligeiro-postgres-db"
-  engine              = "postgres"
-  instance_class      = "db.t3.micro"  
-  allocated_storage   = 10  
-  storage_type        = "gp2" 
-  db_name             = "tremligeiro_db"  
-  username            = "admintremligeiro" 
-  password            = "admintremligeiro" 
-  skip_final_snapshot = true  
-
-  vpc_security_group_ids = [aws_security_group.rds_security_group.id]
-
+  identifier              = "tremligeiro-postgres-db"
+  engine                  = "postgres"
+  instance_class          = "db.t3.micro"  
+  allocated_storage       = 10  
+  storage_type            = "gp2" 
+  db_name                 = "tremligeiro_db"  
+  username                = "admintremligeiro" 
+  password                = "admintremligeiro" 
+  skip_final_snapshot     = true  
   backup_retention_period = 1 
   publicly_accessible     = false  
+  multi_az                = false
+
+  vpc_security_group_ids = [aws_security_group.rds_security_group.id]
+  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
+  parameter_group_name   = aws_db_parameter_group.db_parameter_group.name
+
 
   tags = {
     Name = "PostgresDB"
   }
 
-  db_subnet_group_name = aws_db_subnet_group.db_subnet_group.name
-  multi_az             = false
-
   depends_on = [aws_security_group.rds_security_group]
-
 }
 
 resource "aws_security_group" "rds_security_group" {
@@ -63,13 +72,12 @@ resource "aws_security_group" "rds_security_group" {
   }
 
   ingress {
-    description = "Allow HTTPS traffic"
-    from_port   = 443
-    to_port     = 443
+    description = "Allow all traffic from the VPC"
+    from_port   = 5432
+    to_port     = 5432
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = [data.aws_vpc.name_vpc.cidr_block]  
   }
-
   egress {
     description = "Allow all outbound traffic"
     from_port   = 0
