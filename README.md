@@ -1,4 +1,4 @@
-# tremligeiro-database-iac
+# Trem Ligeiro RDS (Relational Database Service)
 
 This applications is responsible for AWS Relational Database Service of the restaurant "Trem Ligeiro" from Company "Trem Bão Tecnologia".
 
