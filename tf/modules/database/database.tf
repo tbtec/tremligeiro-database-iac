@@ -152,6 +152,15 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 ### MongoDB (Amazon DocumentDB)
+resource "aws_docdb_cluster_parameter_group" "docdb_parameter_group" {
+  family = "docdb5.0"
+  name   = "docdb-pg-tremligeiro-mongo-db"
+
+  parameter {
+    name  = "tls"
+    value = "disabled"
+  }
+}
 resource "aws_security_group" "docdb_security_group" {
   name        = "docdb-security-group"
   description = "Security Group for DocumentDB"
@@ -195,12 +204,13 @@ resource "aws_db_subnet_group" "docdb_subnet_group" {
 }
 
 resource "aws_docdb_cluster" "mongo_cluster_customer" {
-  cluster_identifier      = "tremligeiro-customer-db"
+  cluster_identifier     = "tremligeiro-customer-db"
   engine                 = "docdb"
   master_username        = "admintremligeiro"
   master_password        = "admintremligeiro"
   db_subnet_group_name   = aws_db_subnet_group.docdb_subnet_group.name
   vpc_security_group_ids = [aws_security_group.docdb_security_group.id]
+  db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.docdb_parameter_group.name
 
   tags = {
     Name = "MongoDBCluster"
@@ -210,12 +220,13 @@ resource "aws_docdb_cluster" "mongo_cluster_customer" {
 }
 
 resource "aws_docdb_cluster" "mongo_cluster_product" {
-  cluster_identifier      = "tremligeiro-product-db"
+  cluster_identifier     = "tremligeiro-product-db"
   engine                 = "docdb"
   master_username        = "admintremligeiro"
   master_password        = "admintremligeiro"
   db_subnet_group_name   = aws_db_subnet_group.docdb_subnet_group.name
   vpc_security_group_ids = [aws_security_group.docdb_security_group.id]
+  db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.docdb_parameter_group.name
 
   tags = {
     Name = "MongoDBCluster"
