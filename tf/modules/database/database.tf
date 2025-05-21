@@ -211,6 +211,7 @@ resource "aws_docdb_cluster" "mongo_cluster_customer" {
   db_subnet_group_name   = aws_db_subnet_group.docdb_subnet_group.name
   vpc_security_group_ids = [aws_security_group.docdb_security_group.id]
   db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.docdb_parameter_group.name
+  port = 27017
 
   tags = {
     Name = "MongoDBCluster"
@@ -227,6 +228,7 @@ resource "aws_docdb_cluster" "mongo_cluster_product" {
   db_subnet_group_name   = aws_db_subnet_group.docdb_subnet_group.name
   vpc_security_group_ids = [aws_security_group.docdb_security_group.id]
   db_cluster_parameter_group_name = aws_docdb_cluster_parameter_group.docdb_parameter_group.name
+  port = 27017
 
   tags = {
     Name = "MongoDBCluster"
